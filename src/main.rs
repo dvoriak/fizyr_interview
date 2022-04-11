@@ -10,6 +10,8 @@ use serde::{Serialize, Deserialize};
 struct Cli {
     /// Id of a PR to work with
     pr_id: String,
+    /// GitHub auth token
+    github_token: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -86,7 +88,7 @@ fn main() {
         owner: "dvoriak", 
         repo: "fizyr_interview", 
         pr_id: &*args.pr_id,
-        github_token: "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"
+        github_token: &args.github_token,
     };
     let issues_url: String = up.get_url();
 
@@ -94,6 +96,7 @@ fn main() {
         print_pr_comments(&issues_url, &client).ok();
         let comment_text: String = ask_for_comment();
         post_pr_comment(&up, &client, &comment_text).ok();
-        thread::sleep(time::Duration::from_secs(3));
+        // Unless there is a wait time GitHub api does not return the last created comment in get comments
+        thread::sleep(time::Duration::from_secs(5));
     }
 }
